@@ -1,0 +1,49 @@
+/**
+ * Color palette — the single source of truth for the app's colors.
+ *
+ * Defined as Tailwind v4 @theme color tokens, so each one generates the usual
+ * utilities (e.g. --color-brand → bg-brand, text-brand, from-brand, border-brand,
+ * shadow-brand, ring-brand …) and supports opacity modifiers (bg-brand/40).
+ *
+ * Imported by layout.css. Retheme the whole app by editing values here.
+ * (Neutral slate/white tones are left as Tailwind's built-in scale.)
+ */
+@theme {
+	/* ── Brand ─────────────────────────────────────────── */
+	--color-brand: #7c3aed; /* primary gradient start (violet-600) */
+	--color-brand-soft: #8b5cf6; /* lighter brand: logo, shadows (violet-500) */
+	--color-brand-accent: #0ea5e9; /* gradient end (sky-500) */
+	--color-brand-ring: #a78bfa; /* focus rings & accents (violet-400) */
+	--color-brand-edge: #c4b5fd; /* hover borders (violet-300) */
+
+	/* ── Status ────────────────────────────────────────── */
+	--color-success: #34d399; /* emerald-400 */
+	--color-success-deep: #14b8a6; /* teal-500 */
+	--color-danger: #f43f5e; /* rose-500 */
+
+	/* ── Ambient glow (animated background blobs) ──────── */
+	--color-glow-violet: #a78bfa;
+	--color-glow-sky: #38bdf8;
+	--color-glow-fuchsia: #f0abfc;
+
+	/* ── Dark canvas (page background gradient) ────────── */
+	--color-canvas-from: #0a0a0f;
+	--color-canvas-via: #0c0c14;
+	--color-canvas-to: #060608;
+
+	/* ── Neutrals (greys — used with opacity modifiers) ── */
+	--color-surface: #ffffff; /* white: glass fills, borders, on-brand text */
+	--color-shade: #000000; /* black: image overlays & deep shadows */
+	--color-ink: #0f172a; /* slate-900: primary text (light) */
+	--color-ink-strong: #334155; /* slate-700 */
+	--color-ink-body: #475569; /* slate-600 */
+	--color-ink-muted: #64748b; /* slate-500: labels, secondary text */
+	--color-ink-faint: #94a3b8; /* slate-400: placeholders, hints */
+	--color-ink-dim: #cbd5e1; /* slate-300: dark-mode text, soft borders */
+	--color-line: #e2e8f0; /* slate-200: borders */
+	--color-fill: #f1f5f9; /* slate-100: subtle fills / dark-mode text */
+	--color-fill-soft: #f8fafc; /* slate-50: light page background */
+
+	/* ── UI chrome ─────────────────────────────────────── */
+	--color-scroll: #787882; /* scrollbar thumb */
+}
