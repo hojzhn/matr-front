@@ -44,11 +44,21 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
 	// --- Anti-spam (cheap, silent checks first) -----------------------------
 	// Honeypot: a hidden field only bots fill.
-	if (String(form.get('company') ?? '').trim() !== '') return decoy();
+	if (String(form.get('company') ?? '').trim() !== '') {
+		console.warn('[submissions] decoy: honeypot filled');
+		return decoy();
+	}
 
 	// Timing: reject implausibly fast submits (and forged/missing tokens).
 	const session = verifySession(String(form.get('formToken') ?? ''));
-	if (!session.ok || session.ageMs < MIN_SUBMIT_MS) return decoy();
+	if (!session.ok) {
+		console.warn('[submissions] decoy: invalid/missing timing token (likely a key mismatch across deploys, or no token sent)');
+		return decoy();
+	}
+	if (session.ageMs < MIN_SUBMIT_MS) {
+		console.warn(`[submissions] decoy: submitted too fast (${session.ageMs}ms < ${MIN_SUBMIT_MS}ms)`);
+		return decoy();
+	}
 
 	// Turnstile: real CAPTCHA gate. A failure can be a real user, so it's visible.
 	const turnstileOk = await verifyTurnstile(
@@ -148,5 +158,6 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	if (!team.ok) console.error('Team notification not sent:', team.error);
 	if (!customer.ok) console.error('Customer confirmation not sent:', customer.error);
 
+	console.log(`[submissions] saved ${id} (${imageKind}); email team=${team.ok} customer=${customer.ok}`);
 	return json({ ok: true, id });
 };
