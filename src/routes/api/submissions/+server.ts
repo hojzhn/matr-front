@@ -69,6 +69,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 
 	const name = String(form.get('name') ?? '').trim();
 	const email = String(form.get('email') ?? '').trim();
+	const title = String(form.get('title') ?? '').trim();
 	const description = String(form.get('description') ?? '').trim();
 	const size = String(form.get('size') ?? '').trim();
 	const medium = String(form.get('medium') ?? '').trim();
@@ -78,6 +79,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	// --- Validation ---------------------------------------------------------
 	if (name.length < 2) return fail('Please provide your name.');
 	if (!EMAIL_RE.test(email)) return fail('Please provide a valid email.');
+	if (!title) return fail('Please give your piece a title.');
 	if (!description) return fail('Please describe your piece.');
 
 	const hasImage = image instanceof File && image.size > 0;
@@ -106,7 +108,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	// Insert first to get a stable id for the storage path.
 	const { data: inserted, error: insertError } = await supabase
 		.from('submissions')
-		.insert({ name, email, description, size, medium, image_kind: imageKind })
+		.insert({ name, email, title, description, size, medium, image_kind: imageKind })
 		.select('id')
 		.single();
 
@@ -150,7 +152,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	}
 
 	// --- Notify (best-effort; order is already saved) -----------------------
-	const order = { name, email, description, size, medium, imageKind, imageUrl };
+	const order = { name, email, title, description, size, medium, imageKind, imageUrl };
 	const [team, customer] = await Promise.all([
 		sendOrderNotification(order, attachment),
 		sendCustomerConfirmation(order, attachment)

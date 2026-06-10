@@ -38,6 +38,7 @@
 	let email = $state('');
 
 	// Step 2
+	let title = $state('');
 	let imageFile = $state<File | null>(null);
 	let artworkLink = $state('');
 	let description = $state('');
@@ -70,6 +71,7 @@
 		const form = new FormData();
 		form.append('name', name);
 		form.append('email', email);
+		form.append('title', title);
 		form.append('description', description);
 		form.append('size', size);
 		form.append('medium', medium);
@@ -145,6 +147,7 @@
 					: `pointer-events-none absolute inset-x-0 top-0 opacity-0 ${done ? '-translate-x-4' : 'translate-x-4'}`}"
 			>
 				<ArtworkStep
+					bind:title
 					bind:file={imageFile}
 					bind:artworkLink
 					bind:description

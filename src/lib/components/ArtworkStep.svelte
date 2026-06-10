@@ -11,6 +11,7 @@
 	const MEDIUMS = ['Stretched', 'Unstretched', 'Paper', "Other"];
 
 	let {
+		title = $bindable(''),
 		file = $bindable(null),
 		artworkLink = $bindable(''),
 		description = $bindable(''),
@@ -22,6 +23,7 @@
 		onsubmit,
 		captcha
 	}: {
+		title?: string;
 		file?: File | null;
 		artworkLink?: string;
 		description?: string;
@@ -44,7 +46,9 @@
 	}
 
 	const hasArtwork = $derived(!!file || isValidUrl(artworkLink));
-	const valid = $derived(hasArtwork && description.trim().length > 0 && !!size && !!medium);
+	const valid = $derived(
+		title.trim().length > 0 && hasArtwork && description.trim().length > 0 && !!size && !!medium
+	);
 </script>
 
 <h1 class="text-lg font-semibold tracking-tight">Describe your piece</h1>
@@ -54,6 +58,13 @@
 <div
 	class="mt-5 rounded-2xl border border-line/80 bg-surface/70 p-2 transition-all focus-within:border-brand-ring focus-within:ring-2 focus-within:ring-brand-ring/30 dark:border-surface/10 dark:bg-surface/[0.03]"
 >
+	<input
+		bind:value={title}
+		type="text"
+		placeholder="Title of your piece"
+		class="mb-2 w-full bg-transparent px-3 py-2 text-sm font-semibold outline-none placeholder:font-normal placeholder:text-ink-faint dark:placeholder:text-ink-muted"
+	/>
+
 	<ImageDropzone bind:file linked={!file && artworkLink.trim().length > 0} />
 
 	{#if !file}

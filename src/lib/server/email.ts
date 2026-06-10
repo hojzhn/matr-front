@@ -4,6 +4,7 @@ import { env } from '$env/dynamic/private';
 export type OrderEmail = {
 	name: string;
 	email: string;
+	title: string;
 	description: string;
 	size: string;
 	medium: string;
@@ -34,6 +35,7 @@ function detailsTable(order: OrderEmail): string {
 	const safe = {
 		name: escapeHtml(order.name),
 		email: escapeHtml(order.email),
+		title: escapeHtml(order.title || '—'),
 		description: escapeHtml(order.description),
 		size: escapeHtml(order.size || '—'),
 		medium: escapeHtml(order.medium || '—'),
@@ -50,6 +52,7 @@ function detailsTable(order: OrderEmail): string {
 				);
 
 	return `<table style="border-collapse:collapse;width:100%">
+		${row('Title', `<strong>${safe.title}</strong>`)}
 		${row('Name', safe.name)}
 		${row('Email', `<a href="mailto:${safe.email}" style="color:#0b8a3f">${safe.email}</a>`)}
 		${row('Description', safe.description)}
@@ -121,11 +124,12 @@ export function sendOrderNotification(order: OrderEmail, attachment?: EmailAttac
 		console.error('ORDER_NOTIFICATION_EMAIL is not set.');
 		return Promise.resolve({ ok: false, error: 'ORDER_NOTIFICATION_EMAIL is not set.' });
 	}
+	const heading = order.title ? `New commission: ${order.title}` : `New commission from ${order.name}`;
 	return send({
 		to,
 		replyTo: order.email, // replies go to the customer
-		subject: `New commission from ${order.name}`,
-		html: buildHtml(order, `New commission from ${order.name}`, 'A new order was submitted on Matr.'),
+		subject: heading,
+		html: buildHtml(order, heading, `A new order was submitted on Matr by ${order.name}.`),
 		attachment
 	});
 }
