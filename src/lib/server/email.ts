@@ -36,7 +36,7 @@ function detailsTable(order: OrderEmail): string {
 		name: escapeHtml(order.name),
 		email: escapeHtml(order.email),
 		title: escapeHtml(order.title || '—'),
-		description: escapeHtml(order.description),
+		description: escapeHtml(order.description || '—'),
 		size: escapeHtml(order.size || '—'),
 		medium: escapeHtml(order.medium || '—'),
 		imageUrl: escapeHtml(order.imageUrl)

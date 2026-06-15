@@ -80,7 +80,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	if (name.length < 2) return fail('Please provide your name.');
 	if (!EMAIL_RE.test(email)) return fail('Please provide a valid email.');
 	if (!title) return fail('Please give your piece a title.');
-	if (!description) return fail('Please describe your piece.');
+	// description is optional
 
 	const hasImage = image instanceof File && image.size > 0;
 	const hasLink = artworkLink.length > 0;

@@ -45,10 +45,38 @@
 		}
 	}
 
+	// Description is optional; everything else is required.
 	const hasArtwork = $derived(!!file || isValidUrl(artworkLink));
-	const valid = $derived(
-		title.trim().length > 0 && hasArtwork && description.trim().length > 0 && !!size && !!medium
-	);
+	const valid = $derived(title.trim().length > 0 && hasArtwork && !!size && !!medium);
+
+	let clientError = $state<string | null>(null);
+
+	function formatList(items: string[]): string {
+		if (items.length === 1) return items[0];
+		return `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+	}
+
+	// The button is always clickable; on click we surface what's missing instead
+	// of silently disabling, then only proceed when valid.
+	function handleSubmit() {
+		const missing: string[] = [];
+		if (!title.trim()) missing.push('a title');
+		if (!hasArtwork) missing.push('an image or link');
+		if (!size) missing.push('a size');
+		if (!medium) missing.push('a medium');
+
+		if (missing.length) {
+			clientError = `Please add ${formatList(missing)}.`;
+			return;
+		}
+		clientError = null;
+		onsubmit?.();
+	}
+
+	// Clear the message as soon as the form becomes valid.
+	$effect(() => {
+		if (valid) clientError = null;
+	});
 </script>
 
 <h1 class="text-lg font-semibold tracking-tight">Describe your piece</h1>
@@ -83,7 +111,7 @@
 	<textarea
 		bind:value={description}
 		rows="2"
-		placeholder="Describe your piece…"
+		placeholder="Describe your piece… (optional)"
 		class="thin-scroll my-2 w-full resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-ink-faint dark:placeholder:text-ink-muted"
 	></textarea>
 <hr class="mb-4 border-line/80 dark:border-surface/10"/>
@@ -111,12 +139,16 @@
 	</div>
 {/if}
 
+{#if clientError}
+	<p class="mt-3 text-center text-xs font-medium text-danger">{clientError}</p>
+{/if}
+
 <!-- Actions -->
-<div class="mt-5 flex gap-3">
+<div class="mt-3 flex gap-3">
 	<IconButton variant="outline" onclick={onback} ariaLabel="Back">
 		<Icon name="arrow-left" class="h-4 w-4" />
 	</IconButton>
-	<Button class="flex-1" onclick={onsubmit} disabled={!valid} loading={submitting}>
+	<Button class="flex-1" onclick={handleSubmit} loading={submitting}>
 		{#if submitting}
 			<Spinner class="h-4 w-4" />
 			Submitting…
