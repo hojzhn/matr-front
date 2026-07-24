@@ -132,25 +132,13 @@
 			{#if mode === 'upload'}
 				<ImageDropzone bind:file />
 			{:else}
-				<div
-					class="flex h-36 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-ink-dim/80 px-4 text-center transition-all focus-within:border-brand-ring focus-within:ring-2 focus-within:ring-brand-ring/30 dark:border-surface/15"
-				>
-					<div
-						class="grid h-10 w-10 place-items-center rounded-full bg-fill text-ink-muted dark:bg-surface/10 dark:text-ink-dim"
-					>
-						<Icon name="link" class="h-5 w-5" />
-					</div>
-							<p class="text-sm font-medium">
-						Provide a link to your image
-		</p>
-					<input
-						bind:value={artworkLink}
-						type="url"
-						inputmode="url"
-						placeholder="http://drive.google.com/..."
-						class="w-full max-w-xs bg-transparent text-center text-sm outline-none placeholder:text-ink-faint dark:placeholder:text-ink-muted"
-					/>
-				</div>
+				<input
+					bind:value={artworkLink}
+					type="url"
+					inputmode="url"
+					placeholder="http://drive.google.com/..."
+					class="w-full rounded-lg border border-line/80 bg-surface/50 px-3 py-2 text-sm outline-none transition-all placeholder:text-ink-faint focus:border-brand-ring focus:ring-2 focus:ring-brand-ring/30 dark:border-surface/10 dark:bg-surface/[0.03] dark:placeholder:text-ink-muted"
+				/>
 			{/if}
 		</div>
 <hr class="my-4 border-line/80 dark:border-surface/10"/>
