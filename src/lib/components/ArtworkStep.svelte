@@ -50,6 +50,7 @@
 	const valid = $derived(title.trim().length > 0 && hasArtwork && !!size && !!medium);
 
 	let clientError = $state<string | null>(null);
+	let mode = $state<'upload' | 'link'>(file ? 'upload' : artworkLink.trim() ? 'link' : 'upload');
 
 	function formatList(items: string[]): string {
 		if (items.length === 1) return items[0];
@@ -84,41 +85,91 @@
 
 <!-- Composer -->
 <div
-	class="mt-5 rounded-2xl border border-line/80 bg-surface/70 p-2 transition-all focus-within:border-brand-ring focus-within:ring-2 focus-within:ring-brand-ring/30 dark:border-surface/10 dark:bg-surface/[0.03]"
+	class="mt-5 rounded-2xl border border-line/80 bg-surface/70 p-4 dark:border-surface/10 dark:bg-surface/[0.03]"
 >
-	<input
-		bind:value={title}
-		type="text"
-		placeholder="Title of your piece"
-		class="mb-2 w-full bg-transparent px-3 py-2 text-sm font-semibold outline-none placeholder:font-normal placeholder:text-ink-faint dark:placeholder:text-ink-muted"
-	/>
-
-	<ImageDropzone bind:file linked={!file && artworkLink.trim().length > 0} />
-
-	{#if !file}
-		<div class="mt-2 flex items-center gap-2 px-1">
-			<span class="text-xs font-medium text-ink-faint">or paste a link</span>
+	<div class="space-y-3">
+		<div>
+			<p class="mb-1.5 px-1 text-xs font-medium text-ink-muted dark:text-ink-faint">Title</p>
 			<input
-				bind:value={artworkLink}
-				type="url"
-				inputmode="url"
-				placeholder="https://…"
-				class="min-w-0 flex-1 rounded-lg border border-line/80 bg-surface/50 px-3 py-1.5 text-xs outline-none transition-all placeholder:text-ink-faint focus:border-brand-ring focus:ring-2 focus:ring-brand-ring/30 dark:border-surface/10 dark:bg-surface/[0.03] dark:placeholder:text-ink-muted"
+				bind:value={title}
+				type="text"
+				placeholder="Title of your piece"
+				class="w-full rounded-lg border border-line/80 bg-surface/50 px-3 py-2 text-sm font-semibold outline-none transition-all placeholder:font-normal placeholder:text-ink-faint focus:border-brand-ring focus:ring-2 focus:ring-brand-ring/30 dark:border-surface/10 dark:bg-surface/[0.03] dark:placeholder:text-ink-muted"
 			/>
 		</div>
-	{/if}
+<hr class="my-4 border-line/80 dark:border-surface/10"/>
+		<div>
+			<p class="mb-1.5 px-1 text-xs font-medium text-ink-muted dark:text-ink-faint">Image</p>
+			<div
+				class="mb-2 flex rounded-full border border-line/80 bg-surface/50 p-1 dark:border-surface/10 dark:bg-surface/[0.03]"
+			>
+				<button
+					type="button"
+					onclick={() => {
+						mode = 'upload';
+						artworkLink = '';
+					}}
+					class="flex-1 rounded-full py-1.5 text-xs font-medium transition-all {mode === 'upload'
+						? 'bg-gradient-to-r from-brand to-brand-accent text-surface shadow shadow-brand-soft/30'
+						: 'text-ink-muted hover:text-brand dark:text-ink-dim'}"
+				>
+					Upload
+				</button>
+				<button
+					type="button"
+					onclick={() => {
+						mode = 'link';
+						file = null;
+					}}
+					class="flex-1 rounded-full py-1.5 text-xs font-medium transition-all {mode === 'link'
+						? 'bg-gradient-to-r from-brand to-brand-accent text-surface shadow shadow-brand-soft/30'
+						: 'text-ink-muted hover:text-brand dark:text-ink-dim'}"
+				>
+					Link
+				</button>
+			</div>
 
-	<textarea
-		bind:value={description}
-		rows="2"
-		placeholder="Describe your piece… (optional)"
-		class="thin-scroll my-2 w-full resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-ink-faint dark:placeholder:text-ink-muted"
-	></textarea>
-<hr class="mb-4 border-line/80 dark:border-surface/10"/>
-	<div class="space-y-2.5 px-1 pb-1">
-		<SizeInput label="Size" bind:value={size} />
-		<ChipGroup label="Medium" options={MEDIUMS} bind:value={medium} />
+			{#if mode === 'upload'}
+				<ImageDropzone bind:file />
+			{:else}
+				<div
+					class="flex h-36 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-ink-dim/80 px-4 text-center transition-all focus-within:border-brand-ring focus-within:ring-2 focus-within:ring-brand-ring/30 dark:border-surface/15"
+				>
+					<div
+						class="grid h-10 w-10 place-items-center rounded-full bg-fill text-ink-muted dark:bg-surface/10 dark:text-ink-dim"
+					>
+						<Icon name="link" class="h-5 w-5" />
+					</div>
+							<p class="text-sm font-medium">
+						Provide a link to your image
+		</p>
+					<input
+						bind:value={artworkLink}
+						type="url"
+						inputmode="url"
+						placeholder="http://drive.google.com/..."
+						class="w-full max-w-xs bg-transparent text-center text-sm outline-none placeholder:text-ink-faint dark:placeholder:text-ink-muted"
+					/>
+				</div>
+			{/if}
+		</div>
+<hr class="my-4 border-line/80 dark:border-surface/10"/>
+		<div>
+			<p class="mb-1.5 px-1 text-xs font-medium text-ink-muted dark:text-ink-faint">Description</p>
+			<textarea
+				bind:value={description}
+				rows="2"
+				placeholder="Describe your piece… (optional)"
+				class="thin-scroll w-full resize-none rounded-lg border border-line/80 bg-surface/50 px-3 py-2 text-sm outline-none transition-all placeholder:text-ink-faint focus:border-brand-ring focus:ring-2 focus:ring-brand-ring/30 dark:border-surface/10 dark:bg-surface/[0.03] dark:placeholder:text-ink-muted"
+			></textarea>
+		</div>
 	</div>
+<hr class="my-4 border-line/80 dark:border-surface/10"/>
+
+		<SizeInput label="Size" bind:value={size} />
+	<hr class="my-4 border-line/80 dark:border-surface/10"/>
+		<ChipGroup label="Medium" options={MEDIUMS} bind:value={medium} />
+
 </div>
 
 <!-- Honeypot — hidden from real users; bots that auto-fill fields trip it. -->

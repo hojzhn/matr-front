@@ -5,7 +5,7 @@
 	import IconButton from './ui/IconButton.svelte';
 	import { MAX_IMAGE_BYTES, MAX_IMAGE_LABEL } from '$lib/constants';
 
-	let { file = $bindable(null), linked = false }: { file?: File | null; linked?: boolean } = $props();
+	let { file = $bindable(null) }: { file?: File | null } = $props();
 
 	let preview = $state<string | null>(null);
 	let dragOver = $state(false);
@@ -65,27 +65,15 @@
 			: 'border-ink-dim/80 dark:border-surface/15'}"
 	>
 		<input type="file" accept="image/*" class="hidden" onchange={onPick} />
-		{#if linked}
-			<div
-				class="grid h-10 w-10 place-items-center rounded-full bg-brand/10 text-brand dark:bg-brand-soft/10 dark:text-brand-ring"
-			>
-				<Icon name="link" class="h-5 w-5" />
-			</div>
-			<p class="text-sm font-medium">Using your link</p>
-			<p class="text-xs text-ink-faint">
-				Drop or <span class="text-brand dark:text-brand-ring">browse</span> to upload a file instead
-			</p>
-		{:else}
-			<div
-				class="grid h-10 w-10 place-items-center rounded-full bg-fill text-ink-muted dark:bg-surface/10 dark:text-ink-dim"
-			>
-				<Icon name="upload" class="h-5 w-5" />
-			</div>
-			<p class="text-sm font-medium">
-				Drop an image or <span class="text-brand dark:text-brand-ring">browse</span>
-			</p>
-			<p class="text-xs text-ink-faint">PNG, JPG up to {MAX_IMAGE_LABEL}</p>
-		{/if}
+		<div
+			class="grid h-10 w-10 place-items-center rounded-full bg-fill text-ink-muted dark:bg-surface/10 dark:text-ink-dim"
+		>
+			<Icon name="upload" class="h-5 w-5" />
+		</div>
+		<p class="text-sm font-medium">
+			Drop an image or <span class="text-brand dark:text-brand-ring">browse</span>
+		</p>
+		<p class="text-xs text-ink-faint">PNG, JPG up to {MAX_IMAGE_LABEL}</p>
 	</label>
 {/if}
 
