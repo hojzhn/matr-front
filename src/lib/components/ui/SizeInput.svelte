@@ -1,27 +1,14 @@
 <script lang="ts">
-	/**
-	 * Manual width × height entry with a cm/in unit toggle. Composes the two
-	 * dimensions into a single human-readable string (e.g. "30 × 40 cm") on the
-	 * bindable `value`, which stays empty until both dimensions are filled.
-	 */
+	/** Manual width × height entry with a cm/in unit toggle. */
 	let {
 		label = 'Size',
-		value = $bindable('')
-	}: { label?: string; value?: string } = $props();
-
-	let width = $state('');
-	let height = $state('');
-	let unit = $state<'cm' | 'in'>('cm');
-
-	function sync() {
-		const w = width.trim();
-		const h = height.trim();
-		value = w && h ? `${w} × ${h} ${unit}` : '';
-	}
+		width = $bindable(''),
+		height = $bindable(''),
+		unit = $bindable('cm')
+	}: { label?: string; width?: string; height?: string; unit?: 'cm' | 'in' } = $props();
 
 	function setUnit(u: 'cm' | 'in') {
 		unit = u;
-		sync();
 	}
 
 	const fieldClass =
@@ -37,11 +24,7 @@
 			inputmode="decimal"
 			placeholder="W"
 			aria-label="Width"
-			value={width}
-			oninput={(e) => {
-				width = e.currentTarget.value;
-				sync();
-			}}
+			bind:value={width}
 			class={fieldClass}
 		/>
 		<span class="shrink-0 text-sm text-ink-faint">×</span>
@@ -51,11 +34,7 @@
 			inputmode="decimal"
 			placeholder="H"
 			aria-label="Height"
-			value={height}
-			oninput={(e) => {
-				height = e.currentTarget.value;
-				sync();
-			}}
+			bind:value={height}
 			class={fieldClass}
 		/>
 

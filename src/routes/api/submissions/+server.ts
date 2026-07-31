@@ -71,7 +71,9 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	const email = String(form.get('email') ?? '').trim();
 	const title = String(form.get('title') ?? '').trim();
 	const description = String(form.get('description') ?? '').trim();
-	const size = String(form.get('size') ?? '').trim();
+	const width = String(form.get('width') ?? '').trim();
+	const height = String(form.get('height') ?? '').trim();
+	const unit = String(form.get('unit') ?? '').trim();
 	const medium = String(form.get('medium') ?? '').trim();
 	const artworkLink = String(form.get('artworkLink') ?? '').trim();
 	const image = form.get('image');
@@ -81,6 +83,13 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	if (!EMAIL_RE.test(email)) return fail('Please provide a valid email.');
 	if (!title) return fail('Please give your piece a title.');
 	// description is optional
+
+	const widthNum = Number(width);
+	const heightNum = Number(height);
+	if (!width || !height || !Number.isFinite(widthNum) || !Number.isFinite(heightNum) || widthNum <= 0 || heightNum <= 0) {
+		return fail('Please provide a valid size.');
+	}
+	if (unit !== 'cm' && unit !== 'in') return fail('Please provide a valid unit.');
 
 	const hasImage = image instanceof File && image.size > 0;
 	const hasLink = artworkLink.length > 0;
@@ -108,7 +117,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	// Insert first to get a stable id for the storage path.
 	const { data: inserted, error: insertError } = await supabase
 		.from('submissions')
-		.insert({ name, email, title, description, size, medium, image_kind: imageKind })
+		.insert({ name, email, title, description, width: widthNum, height: heightNum, unit, medium, image_kind: imageKind })
 		.select('id')
 		.single();
 
@@ -152,6 +161,7 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	}
 
 	// --- Notify (best-effort; order is already saved) -----------------------
+	const size = `${width} × ${height} ${unit}`;
 	const order = { name, email, title, description, size, medium, imageKind, imageUrl };
 	const [team, customer] = await Promise.all([
 		sendOrderNotification(order, attachment),

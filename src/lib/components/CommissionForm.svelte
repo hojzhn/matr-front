@@ -42,7 +42,9 @@
 	let imageFile = $state<File | null>(null);
 	let artworkLink = $state('');
 	let description = $state('');
-	let size = $state('');
+	let width = $state('');
+	let height = $state('');
+	let unit = $state<'cm' | 'in'>('cm');
 	let medium = $state('');
 
 	// Anti-spam
@@ -73,7 +75,9 @@
 		form.append('email', email);
 		form.append('title', title);
 		form.append('description', description);
-		form.append('size', size);
+		form.append('width', width);
+		form.append('height', height);
+		form.append('unit', unit);
 		form.append('medium', medium);
 		if (imageFile) {
 			form.append('image', imageFile);
@@ -151,7 +155,9 @@
 					bind:file={imageFile}
 					bind:artworkLink
 					bind:description
-					bind:size
+					bind:width
+					bind:height
+					bind:unit
 					bind:medium
 					bind:honeypot
 					{submitting}

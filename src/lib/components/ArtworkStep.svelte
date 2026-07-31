@@ -15,7 +15,9 @@
 		file = $bindable(null),
 		artworkLink = $bindable(''),
 		description = $bindable(''),
-		size = $bindable(''),
+		width = $bindable(''),
+		height = $bindable(''),
+		unit = $bindable('cm'),
 		medium = $bindable(''),
 		honeypot = $bindable(''),
 		submitting = false,
@@ -27,7 +29,9 @@
 		file?: File | null;
 		artworkLink?: string;
 		description?: string;
-		size?: string;
+		width?: string;
+		height?: string;
+		unit?: 'cm' | 'in';
 		medium?: string;
 		honeypot?: string;
 		submitting?: boolean;
@@ -47,7 +51,8 @@
 
 	// Description is optional; everything else is required.
 	const hasArtwork = $derived(!!file || isValidUrl(artworkLink));
-	const valid = $derived(title.trim().length > 0 && hasArtwork && !!size && !!medium);
+	const hasSize = $derived(!!width && !!height);
+	const valid = $derived(title.trim().length > 0 && hasArtwork && hasSize && !!medium);
 
 	let clientError = $state<string | null>(null);
 	let mode = $state<'upload' | 'link'>(file ? 'upload' : artworkLink.trim() ? 'link' : 'upload');
@@ -63,7 +68,7 @@
 		const missing: string[] = [];
 		if (!title.trim()) missing.push('a title');
 		if (!hasArtwork) missing.push('an image or link');
-		if (!size) missing.push('a size');
+		if (!hasSize) missing.push('a size');
 		if (!medium) missing.push('a medium');
 
 		if (missing.length) {
@@ -154,7 +159,7 @@
 	</div>
 <hr class="my-4 border-line/80 dark:border-surface/10"/>
 
-		<SizeInput label="Size" bind:value={size} />
+		<SizeInput label="Size" bind:width bind:height bind:unit />
 	<hr class="my-4 border-line/80 dark:border-surface/10"/>
 		<ChipGroup label="Medium" options={MEDIUMS} bind:value={medium} />
 
